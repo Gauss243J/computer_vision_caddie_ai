@@ -1,0 +1,172 @@
+ <%- include('./partials/header') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .sidebar {
+            height: 100vh; /* Vue pleine hauteur */
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 220px;
+            padding-top: 20px;
+        }
+
+        .sidebar a {
+            color: white;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+            color: white;
+        }
+
+        .content {
+            margin-left: 220px; /* Décalage à gauche pour tenir compte du sidebar */
+            padding: 20px;
+        }
+
+        .header, .header h2 {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .table-striped > tbody > tr:nth-of-type(odd) {
+            background-color: #f2f2f2;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+        }
+
+        /* Chart style */
+        #salesChart {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2, h3 {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h4 class="text-center">Boutique</h4>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Tableau de bord</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/products">Produits</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/purchases">Achats</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/carts">Paniers</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content container p-4">
+            <div class="header">
+                <h2>Tableau de bord</h2>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <h3>Statistiques de ventes</h3>
+                    <canvas id="salesChart"></canvas>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <h3>Achats récents</h3>
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Numéro de panier</th>
+                                <th>Date</th>
+                                <th>Prix total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% recentPurchases.forEach(purchase => { %>
+                            <tr>
+                                <td><%= purchase.cartNumber %></td>
+                                <td><%= purchase.date %></td>
+                                <td><%= purchase.products.reduce((sum, p) => sum + p.totalPrice, 0) %></td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: JSON.parse('<%- JSON.stringify(salesData.dates) %>'),
+                datasets: [{
+                    label: 'Totales Ventes',
+                    data: JSON.parse('<%- JSON.stringify(salesData.totals) %>'),
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+                    fill: true
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 5,
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

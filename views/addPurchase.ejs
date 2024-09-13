@@ -1,0 +1,57 @@
+<%- include('layout') %>
+
+<h2>Add Purchase</h2>
+<form action="/purchases/add" method="POST">
+    <div class="mb-3">
+        <label for="cartNumber" class="form-label">Cart Number</label>
+        <input type="number" name="cartNumber" id="cartNumber" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="products" class="form-label">Products</label>
+        <div id="product-list">
+            <div class="product-item mb-2">
+                <select name="products[0][productId]" class="form-select" required>
+                    <% products.forEach(product => { %>
+                    <option value="<%= product._id %>"><%= product.name %></option>
+                    <% }) %>
+                </select>
+                <input type="number" name="products[0][priceUnit]" class="form-control mt-2" placeholder="Price per unit" required>
+                <input type="number" name="products[0][quantity]" class="form-control mt-2" placeholder="Quantity" required>
+                <input type="number" name="products[0][totalPrice]" class="form-control mt-2" placeholder="Total Price" required readonly>
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary mt-2" id="add-product">Add More Products</button>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Purchase</button>
+</form>
+
+<script>
+    document.getElementById('add-product').addEventListener('click', function() {
+        const productCount = document.querySelectorAll('.product-item').length;
+        const newProduct = document.createElement('div');
+        newProduct.classList.add('product-item', 'mb-2');
+        newProduct.innerHTML = `
+            <select name="products[${productCount}][productId]" class="form-select" required>
+                <% products.forEach(product => { %>
+                <option value="<%= product._id %>"><%= product.name %></option>
+                <% }) %>
+            </select>
+            <input type="number" name="products[${productCount}][priceUnit]" class="form-control mt-2" placeholder="Price per unit" required>
+            <input type="number" name="products[${productCount}][quantity]" class="form-control mt-2" placeholder="Quantity" required>
+            <input type="number" name="products[${productCount}][totalPrice]" class="form-control mt-2" placeholder="Total Price" required readonly>
+        `;
+        document.getElementById('product-list').appendChild(newProduct);
+    });
+
+    document.addEventListener('input', function(e) {
+        if (e.target.matches('[name$="[priceUnit]"], [name$="[quantity]"]')) {
+            const productItem = e.target.closest('.product-item');
+            const priceUnit = productItem.querySelector('[name$="[priceUnit]"]').value;
+            const quantity = productItem.querySelector('[name$="[quantity]"]').value;
+            const totalPriceInput = productItem.querySelector('[name$="[totalPrice]"]');
+            totalPriceInput.value = priceUnit * quantity || '';
+        }
+    });
+</script>
