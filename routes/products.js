@@ -8,6 +8,16 @@ router.get('/', async (req, res) => {
     res.render('products', { products });
 });
 
+// Afficher tous les produits
+router.get('/products', async (req, res) => {
+    try {
+        const products = await Produict.find(); // Correction du nom du modèle
+        res.json(produicts); // Retourne les produits en format JSON
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération des produits', error });
+    }
+});
+
 // Ajouter un produit
 router.post('/add', async (req, res) => {
     const { name, price, stock } = req.body;
@@ -20,6 +30,8 @@ router.post('/add', async (req, res) => {
     await newProduct.save();
     res.redirect('/products');
 });
+
+
 
 // Supprimer un produit
 router.post('/delete/:id', async (req, res) => {
