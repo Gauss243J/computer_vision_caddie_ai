@@ -25,7 +25,7 @@ app.set('view engine', 'ejs');
 // Routes
 app.use('/', require('./routes/index'));
 app.use('/products', require('./routes/products'));
-app.use('/products', require('./routes/produicts'));
+app.use('/produicts', require('./routes/produicts'));
 app.use('/carts', require('./routes/carts'));
 app.use('/purchases', require('./routes/purchases'));
 app.use('/stock',  require('./routes/stock'));
