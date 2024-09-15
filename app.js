@@ -18,6 +18,8 @@ mongoose.connect(process.env.DB)
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json()); // Pour traiter le JSON dans req.body
+app.use(express.urlencoded({ extended: true })); // Pour traiter les données de formulaire
 
 // Set view engine
 app.set('view engine', 'ejs');
