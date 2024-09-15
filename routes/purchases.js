@@ -157,7 +157,7 @@ router.post('/addss', async (req, res) => {
         res.status(200).json({ message: 'Achat ajouté avec succès' });
     } catch (error) {
         console.error('Erreur lors de l\'ajout d\'un achat :', error.message);
-        res.status(500).send(error.message));
+        res.status(500).send(error.message);
     }
 });
 module.exports = router;
