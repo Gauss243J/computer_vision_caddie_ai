@@ -66,5 +66,47 @@ router.post('/add', async (req, res) => {
     }
 });
 
+router.post('/adds', async (req, res) => {
+    try {
+        const { cartNumber, products } = req.body;
+        const productList = JSON.parse(products); // Assurez-vous que products contient [{ "productId": "id", "quantity": 2 }]
 
+        const productDetails = await Product.find({
+            _id: { $in: productList.map(p => p.productId) }
+        });
+
+        const purchaseProducts = productList.map(p => {
+            const productDetail = productDetails.find(pd => pd._id.toString() === p.productId);
+            if (productDetail) {
+                if (productDetail.stock < p.quantity) {
+                    throw new Error(`Stock insuffisant pour le produit: ${productDetail.name}`);
+                }
+                // Réduire le stock du produit
+                productDetail.stock -= p.quantity;
+                productDetail.save(); // Mise à jour du stock dans la base
+
+                return {
+                    productId: p.productId,
+                    productName: productDetail.name,  // Récupérer le nom du produit
+                    priceUnit: productDetail.price,  // Récupérer le prix unitaire
+                    quantity: p.quantity,
+                    totalPrice: productDetail.price * p.quantity  // Calcul du prix total
+                };
+            }
+        });
+
+        const newPurchase = new Purchase({
+            cartNumber,
+            products: purchaseProducts,
+            date: new Date() // Ajouter la date de l'achat
+        });
+
+        await newPurchase.save();
+        //res.redirect('/purchases');
+         res.status(200).json({ message: 'BIEN');
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout d\'un achat :', error);
+        res.status(500).send('Erreur lors de l\'ajout d\'un achat.');
+    }
+});
 module.exports = router;
