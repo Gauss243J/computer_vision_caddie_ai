@@ -103,7 +103,7 @@ router.post('/adds', async (req, res) => {
 
         await newPurchase.save();
         //res.redirect('/purchases');
-         res.status(200).json({ message: 'BIEN');
+         res.status(200).json({ message: 'BIEN' });
     } catch (error) {
         console.error('Erreur lors de l\'ajout d\'un achat :', error);
         res.status(500).send('Erreur lors de l\'ajout d\'un achat.');
