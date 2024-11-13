@@ -1,4 +1,4 @@
-<%- include('./partials/header') %>
+<%- include('./partials/header') %> 
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,95 +8,7 @@
     <title>Purchase Details</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .sidebar {
-            height: 100vh; /* Vue pleine hauteur */
-            background-color: #343a40;
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 220px;
-            padding-top: 20px;
-        }
-
-        .sidebar a {
-            color: white;
-        }
-
-        .sidebar a:hover {
-            background-color: #495057;
-            color: white;
-        }
-
-        .content {
-            margin-left: 220px; /* Décalage à gauche pour tenir compte du sidebar */
-            padding: 20px;
-        }
-
-        h2, h3 {
-            color: #007bff;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            border-color: #28a745;
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-        }
-
-        .table-striped > tbody > tr:nth-of-type(odd) {
-            background-color: #f2f2f2;
-        }
-
-        /* CSS pour l'impression */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            .printable, .printable * {
-                visibility: visible;
-            }
-            .printable {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-            }
-            /* Cacher le bouton d'impression lors de l'impression */
-            .btn-success {
-                display: none;
-            }
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .content {
-                margin-left: 0;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-        }
+        /* Styles existants... */
     </style>
 </head>
 <body>
@@ -105,18 +17,7 @@
         <div class="sidebar">
             <h4 class="text-center">Boutique</h4>
             <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Tableau de bord</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/products">Products</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/purchases">Purchases</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/carts">Carts</a>
-                </li>
+                <!-- Liens du menu... -->
             </ul>
         </div>
 
@@ -127,7 +28,6 @@
                     <% if (purchase) { %>
                     <!-- Section imprimable -->
                     <div class="printable">
-                        <!-- Ajout des détails de l'achat ici -->
                         <h2>Détails de l'achat: <%= purchase.cartNumber %> (ID: <%= purchase._id.toString().slice(-6) %>)</h2>
                         <p>Date de l'achat: <%= new Date(purchase.date).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
 
@@ -141,23 +41,29 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <% purchase.products.forEach(product => { %>
+                                <% 
+                                let totalAmount = 0;
+                                purchase.products.forEach(product => { 
+                                    totalAmount += product.totalPrice; // Calcul du total général
+                                %>
                                 <tr>
-                                    <td><%= product.productName || 'Unknown Product' %></td> <!-- Affichage du nom du produit -->
+                                    <td><%= product.productName || 'Unknown Product' %></td>
                                     <td><%= product.priceUnit %></td>
                                     <td><%= product.quantity %></td>
                                     <td><%= product.totalPrice %></td>
                                 </tr>
                                 <% }) %>
                             </tbody>
-                            
                         </table>
 
+                        <!-- Affichage du montant total -->
+                        <h3 class="text-end">Montant total: <%= totalAmount %> €</h3>
+
                         <a href="#" class="btn btn-success" onclick="window.print()">Print Invoice</a>
-                                                <% } else { %>
-                            <h2>Aucune donnée d'achat disponible.</h2>
-                        <% } %>
                     </div>
+                    <% } else { %>
+                        <h2>Aucune donnée d'achat disponible.</h2>
+                    <% } %>
                 </div>
             </div>
         </div>
@@ -166,4 +72,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
 
